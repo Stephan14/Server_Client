@@ -23,7 +23,7 @@ int main(int argc, char const *argv[]) {
     exit(0);
   }
   //创建socket套接字
-  if( sockfd = ( socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
+  if( ( sockfd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
   {
     printf( "create socket error: %s( error:%d )\n", strerror( errno ), errno );
     exit(0);
@@ -73,7 +73,7 @@ int main(int argc, char const *argv[]) {
     exit(1);
   }
   recv_buffer[recv_len] = NUL;
-  printf( "receive message from server :%s", recv_buffer );
+  printf( "receive message from server :%s\n", recv_buffer );
 
   //关闭连接
   close( sockfd );
