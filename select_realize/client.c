@@ -43,20 +43,24 @@ int main(int argc, char** argv)
     exit(0);
     }
 
-
-    printf("send msg to server: \n");
-    fgets(sendline, 4096, stdin);
-    if( send(sockfd, sendline, strlen(sendline), 0) < 0)
+    while( 1 )
     {
-    printf("send msg error: %s(errno: %d)\n", strerror(errno), errno);
-    exit(0);
+      printf("send msg to server: \n");
+      fgets(sendline, 4096, stdin);
+      if( strcmp( sendline, "exit") == 0 )
+        break;
+      if( send(sockfd, sendline, strlen(sendline), 0) < 0)
+      {
+      printf("send msg error: %s(errno: %d)\n", strerror(errno), errno);
+      exit(0);
+      }
+      if((rec_len = recv(sockfd, buf, MAXLINE,0)) == -1) {
+         perror("recv error");
+         exit(1);
+      }
+      buf[rec_len]  = '\0';
+      printf("rece msg from server : %s ",buf);
     }
-    if((rec_len = recv(sockfd, buf, MAXLINE,0)) == -1) {
-       perror("recv error");
-       exit(1);
-    }
-    buf[rec_len]  = '\0';
-    printf("Received : %s ",buf);
     close(sockfd);
     exit(0);
 }

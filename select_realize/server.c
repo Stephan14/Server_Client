@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 {
     int    socket_fd, connect_fd;
     struct sockaddr_in servaddr, clientaddr;
-    struct timeval timeout = { 30, 0 };
+    struct timeval timeout = { 3, 0 };
     fd_set file_des_set;//无struct
     char    buff[4096];
     int     n, state, connection_mount = 0, fd_active[ CONNECTION_MAX ];
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
         if( state < 0 )
         {
-          printf("select file descripter set is null! ");
+          printf("select file descripter set is null! \n");
           break;//break;
         }
         else if( state == 0 )
@@ -85,9 +85,9 @@ int main(int argc, char** argv)
             if( FD_ISSET( fd_active[ index ], &file_des_set ) )
             {
               //接受客户端传过来的数据
-              if( n = recv( fd_active[ index ], buff, MAXLINE, 0  ) <= 0)
+              if( ( n = recv( fd_active[ index ], buff, MAXLINE, 0  ) ) <= 0)
               { //文件描述符集合中的套接字没有收到客户端传送的数据，则关闭连接
-                printf("client %d closed !", index );
+                printf("client %d closed!\n", index );
                 close( fd_active[ index ] );
                 FD_CLR( fd_active[ index ], &file_des_set );
                 fd_active[ index ] = 0;
@@ -97,9 +97,10 @@ int main(int argc, char** argv)
               {
                 if( n < MAXLINE)
                   buff[n] = '\0';
-                printf("recv msg from client: %s\n", buff);
+                printf("recv msg from client[%d]: %s\n", index+1, buff);
                 //向客户端发送回应数据
-                if( send( fd_active[ index ], "Hello,you are connected!\n", 26, 0 ) == -1)
+                sprintf( buff, "server have receive %d bytes!\n", n);
+                if( send( fd_active[ index ], buff, strlen( buff ), 0 ) == -1)
                   perror("send error");
               }
             }
@@ -110,7 +111,7 @@ int main(int argc, char** argv)
           //阻塞直到有客户端连接，不然多浪费CPU资源
           if( ( connect_fd = accept( socket_fd, (struct sockaddr*)&clientaddr, &clientaddr_size ) ) == -1)
           {
-            printf("accept socket error: %s(errno: %d)",strerror(errno),errno);
+            printf("accept socket error: %s(errno: %d)\n",strerror(errno),errno);
             continue;
           }
           //将新建立的套接字添加到文件标识符集合中
