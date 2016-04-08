@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>//使用exit(0)
-#include<errno.h>//使用errno、
+#include<errno.h>//使用errno
 #include<string.h>//使用strerror()函数
 #include<memory.h>//使用memset()函数
 #include<sys/socket.h>
