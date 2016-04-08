@@ -33,8 +33,8 @@ int main(int argc, char** argv)
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(8000);
     if( inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0){
-    printf("inet_pton error for %s\n",argv[1]);
-    exit(0);
+      printf("inet_pton error for %s\n",argv[1]);
+      exit(0);
     }
 
 
@@ -59,4 +59,4 @@ int main(int argc, char** argv)
     printf("Received : %s ",buf);
     close(sockfd);
     exit(0);
-}  
+}
