@@ -1,11 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>//使用exit(0)
-#include<errno.h>//使用errno
 #include<string.h>//使用strerror()函数
+#include<errno.h>//使用errno
 #include<memory.h>//使用memset()函数
-#include<sys/socket.h>
-#include<sys/types.h>
-#include<netinet/in.h>
+#include<sys/socket.h>// recvmsg() sendmsg() socket() bind() connect() listen() accept() Linux的位置/usr/include/x86_64-linux-gnu/sys/socket.h
+#include<sys/uio.h>// struct iovec
+#include<netinet/in.h>// struct sockaddr_in  struct sockaddr
+#include<arpa/inet.h>// htons()  htonl() inet_ntop() inet_pton() inet_pton()
 
 #define BUFFER_MAX 4096
 #define NUL '\0'
