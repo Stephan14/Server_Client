@@ -7,7 +7,7 @@
 #include<netinet/in.h>
 
 #define MAXLINE 4096
-
+#define DEFAULT_PORT 1234
 
 int main(int argc, char** argv)
 {
@@ -16,31 +16,31 @@ int main(int argc, char** argv)
     char    buf[MAXLINE];
     struct sockaddr_in    servaddr;
 
-
-    if( argc != 2){
-    printf("usage: ./client <ipaddress>\n");
-    exit(0);
+    if( argc != 2)
+    {
+      printf("usage: ./client <ipaddress>\n");
+      exit(0);
     }
 
-
-    if( (sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0){
-    printf("create socket error: %s(errno: %d)\n", strerror(errno),errno);
-    exit(0);
+    if( (sockfd = socket(AF_INET, SOCK_STREAM, 0) ) < 0)
+    {
+      printf("create socket error: %s(errno: %d)\n", strerror(errno),errno);
+      exit(0);
     }
 
-
-    memset(&servaddr, 0, sizeof(servaddr));
+    memset(&servaddr, 0, sizeof( servaddr ) );
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htons(1234);
-    if( inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0){
-    printf("inet_pton error for %s\n",argv[1]);
-    exit(0);
+    servaddr.sin_port = htons( DEFAULT_PORT );
+    if( inet_pton(AF_INET, argv[1], &servaddr.sin_addr) <= 0 )
+    {
+      printf("inet_pton error for %s\n",argv[1]);
+      exit(0);
     }
 
-
-    if( connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0){
-    printf("connect error: %s(errno: %d)\n",strerror(errno),errno);
-    exit(0);
+    if( connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr) ) < 0)
+    {
+      printf("connect error: %s(errno: %d)\n",strerror(errno),errno);
+      exit(0);
     }
 
     while( 1 )
@@ -49,12 +49,13 @@ int main(int argc, char** argv)
       fgets(sendline, 4096, stdin);
       if( strcmp( sendline, "exit") == 0 )
         break;
-      if( send(sockfd, sendline, strlen(sendline), 0) < 0)
+      if( send(sockfd, sendline, strlen(sendline), 0 ) < 0 )
       {
-      printf("send msg error: %s(errno: %d)\n", strerror(errno), errno);
-      exit(0);
+        printf("send msg error: %s(errno: %d)\n", strerror(errno), errno);
+        exit(0);
       }
-      if((rec_len = recv(sockfd, buf, MAXLINE,0)) == -1) {
+      if((rec_len = recv(sockfd, buf, MAXLINE,0) ) == -1 )
+      {
          perror("recv error");
          exit(1);
       }
@@ -62,5 +63,5 @@ int main(int argc, char** argv)
       printf("rece msg from server : %s ",buf);
     }
     close(sockfd);
-    exit(0);
+    return 0;
 }

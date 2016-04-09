@@ -19,30 +19,33 @@ int main(int argc, char** argv)
     int    socket_fd, connect_fd;
     struct sockaddr_in servaddr, clientaddr;
     struct timeval timeout = { 3, 0 };
-    fd_set file_des_set;//无struct
-    char    buff[4096];
+    char    buff[ MAXLINE ];
     int     n, state, connection_mount = 0, fd_active[ CONNECTION_MAX ];
     int clientaddr_size = sizeof( clientaddr );
+    fd_set file_des_set;//无struct
 
     memset( fd_active, 0, CONNECTION_MAX );
     //初始化Socket
-    if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) == -1 ){
+    if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0) ) == -1 )
+    {
       printf("create socket error: %s(errno: %d)\n",strerror(errno),errno);
       exit(0);
     }
-    //初始化
-    memset(&servaddr, 0, sizeof(servaddr));
+    //初始化服务器地址
+    memset(&servaddr, 0, sizeof( servaddr ) );
     servaddr.sin_family = AF_INET;
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);//IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址。
-    servaddr.sin_port = htons(DEFAULT_PORT);//设置的端口为DEFAULT_PORT
+    servaddr.sin_addr.s_addr = htonl( INADDR_ANY );//IP地址设置成INADDR_ANY,让系统自动获取本机的IP地址。
+    servaddr.sin_port = htons( DEFAULT_PORT );//设置的端口为DEFAULT_PORT
 
     //将本地地址绑定到所创建的套接字上
-    if( bind(socket_fd, (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1){
+    if( bind(socket_fd, (struct sockaddr*)&servaddr, sizeof(servaddr) ) == -1)
+    {
       printf("bind socket error: %s(errno: %d)\n",strerror(errno),errno);
       exit(0);
     }
     //开始监听是否有客户端连接
-    if( listen(socket_fd, CONNECTION_MAX ) == -1){
+    if( listen(socket_fd, CONNECTION_MAX ) == -1 )
+    {
       printf("listen socket error: %s(errno: %d)\n",strerror(errno),errno);
       exit(0);
     }
@@ -54,10 +57,8 @@ int main(int argc, char** argv)
         FD_ZERO( &file_des_set );
         //添加文件描述符
         FD_SET( socket_fd, &file_des_set );
-
         timeout.tv_sec = 30;
         timeout.tv_usec = 0;
-
         //向文件标识符集合中添加活跃的连接
         int index;
         for( index = 0; index < CONNECTION_MAX; index++ )
@@ -65,9 +66,7 @@ int main(int argc, char** argv)
           if( fd_active[ index] != 0)
             FD_SET( fd_active[ index ], &file_des_set );
         }
-
         state = select( maxsock + 1, &file_des_set, NULL, NULL, &timeout );
-
         if( state < 0 )
         {
           printf("select file descripter set is null! \n");
@@ -78,7 +77,6 @@ int main(int argc, char** argv)
           printf( "select timeout!\n" );
           continue;
         }
-
         //检查文件字符集合中的文件标识符
         for( index = 0; index < connection_mount; index++ )
         {
@@ -138,6 +136,5 @@ int main(int argc, char** argv)
         //     close( fd_active[ index ] );
         // }
     }
-
     close(socket_fd);
 }
