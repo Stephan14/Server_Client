@@ -6,15 +6,18 @@
 #include<sys/socket.h>
 #include<netinet/in.h>
 
-#define MAXLINE 4096
+#define MAXLINE 1024
 #define DEFAULT_PORT 1234
-
+struct context{
+  char str[1024];
+};
 int main(int argc, char** argv)
 {
     int    sockfd, n,rec_len;
-    char    recvline[4096], sendline[4096];
+    char    recvline[1024], sendline[1024];
     char    buf[MAXLINE];
     struct sockaddr_in    servaddr;
+    struct context text;
 
     if( argc != 2)
     {
@@ -45,22 +48,23 @@ int main(int argc, char** argv)
 
     while( 1 )
     {
-      printf("send msg to server: \n");
-      fgets(sendline, 4096, stdin);
+      printf("send msg to server：\n");
+      fgets(sendline, 1024, stdin);
       if( strcmp( sendline, "exit") == 0 )
         break;
-      if( send(sockfd, sendline, strlen(sendline), 0 ) < 0 )
+      strcpy( text.str, sendline );
+      if( send(sockfd, (char *)&text, sizeof( struct context ), 0 ) < 0 )
       {
         printf("send msg error: %s(errno: %d)\n", strerror(errno), errno);
         exit(0);
       }
-      if((rec_len = recv(sockfd, buf, MAXLINE,0) ) == -1 )
+      if( ( rec_len = recv(sockfd, buf, MAXLINE,0 ) ) == -1 )
       {
          perror("recv error");
          exit(1);
       }
-      buf[rec_len]  = '\0';
-      printf("rece msg from server : %s ",buf);
+      strcpy( recvline, ( ( struct context *)buf )->str );
+      printf("recv msg from server：\n%s", recvline );
     }
     close(sockfd);
     return 0;
