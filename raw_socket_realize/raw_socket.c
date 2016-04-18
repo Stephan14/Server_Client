@@ -1,17 +1,17 @@
+#include<errno.h>
 #include<stdio.h>
+#include<unistd.h>
 #include<stdlib.h>
 #include<string.h>
-#include<netinet/in.h>
-#include<net/ethernet.h>
+#include<memory.h>
 #include<sys/socket.h> //socket()
 #include<sys/ioctl.h>
+#include<net/ethernet.h>
+#include<net/if.h>
+#include<netinet/in.h>
 #include<netinet/ether.h>
 #include<netinet/ip.h>
 #include<netinet/tcp.h>
-#include<net/if.h>
-#include<memory.h>
-#include<errno.h>
-#include<unistd.h>
 #include<arpa/inet.h>//inet_ntoa() struct in_addr
 
 int analyData( char *data )
@@ -29,8 +29,8 @@ int analyData( char *data )
   printf("Dest IP ---- %s\n", inet_ntoa( *( ( struct in_addr * )&ip->daddr ) ) );//将网络地址转换成“.”点隔的字符串格式。
 
   tcp = (struct tcphdr *) ( data + sizeof( *ip ) );//结构体
-  printf("Source IP ---- %d\n", ntohs( tcp->source ) );
-  printf("Dest IP ---- %d\n", ntohs( tcp->dest ) );
+  printf("Source Port ---- %d\n", ntohs( tcp->source ) );
+  printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
 
   return 1;
 }
@@ -76,12 +76,12 @@ int main(int argc,char *argv[])
         int len = recvfrom( sock_raw_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&recvaddr, &recv_len );
         if( len > 0 )
         {
-          printf("获取%d字节数据!!!\n", len );
+          printf("This packet get %d bytes !!!\n", len );
           buffer[len] = '\0';
           analyData( buffer );
           printf("Already get %d packet !!!\n", ++count );
         }
       }
-
-     return 0;
+      close( sock_raw_fd );
+      return 0;
 }

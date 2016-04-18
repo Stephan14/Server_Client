@@ -14,12 +14,16 @@
 #include<netinet/tcp.h>
 #include<arpa/inet.h>//inet_ntoa() struct in_addr
 
+struct context{
+  char str[1024];
+};
+
 int analyData( char *data )
 {
   struct iphdr *ip;
   struct tcphdr *tcp;
   struct ether_header *ehter;
-
+  struct context *temp_data;
   //ether=(struct ether_header*)data;//若数据是从数据链路曾抓取的，那么就有这个以太网帧头
   //printf(" data packet type:%d/n",ether->ether_type);
   //ip=(struct iphdr*)(data+sizeof(struct ether_header));
@@ -45,7 +49,9 @@ int analyData( char *data )
   tcp = (struct tcphdr *) ( data + sizeof( *ip ) );//结构体
   printf("Source Port ---- %d\n", ntohs( tcp->source ) );
   printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
-  //printf("Data ---- %d\n", (tcp->urg_ptr) );
+  //temp_data = ( data + sizeof( *ip ) + sizeof( *tcp ) );
+  temp_data = ( struct context *)( data + sizeof( *ip ) + sizeof( *tcp ) );
+  printf("Data ---- %s\n", temp_data->str );
   return 1;
 }
 int get_datagram( char argv[])
@@ -96,8 +102,7 @@ int get_datagram( char argv[])
         int len = recvfrom( sock_raw_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&recvaddr, &recv_len );
         if( len > 0 )
         {
-          printf("This packet get %d bytes !!!\n", len );
-          buffer[len] = '\0';
+          printf("This packet get %d bytes !!!\n", strlen( buffer ) );
           analyData( buffer );
           printf("Already get %d packet !!!\n", ++count );
           printf("\n");
