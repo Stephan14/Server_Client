@@ -50,8 +50,8 @@ int analyData( char *data )
   printf("Source Port ---- %d\n", ntohs( tcp->source ) );
   printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
   //temp_data = ( data + sizeof( *ip ) + sizeof( *tcp ) );
-  temp_data = ( struct context *)( data + sizeof( *ip ) + sizeof( *tcp ) );
-  printf("Data ---- %s\n", temp_data->str );
+  // temp_data = ( struct context *)( data + sizeof( *ip ) + sizeof( *tcp ) );
+  // printf("Data ---- %s\n", temp_data->str );
   return 1;
 }
 int get_datagram( char argv[])
