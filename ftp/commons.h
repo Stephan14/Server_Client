@@ -83,7 +83,7 @@
 
 #define	DEBUG		1
 
-#define	PORTSERVER	8487
+#define	PORTSERVER	1234
 #define CONTROLPORT	PORTSERVER
 #define DATAPORT	(PORTSERVER + 1)
 
@@ -153,4 +153,3 @@ enum COMMAND
 				2D array in client_ftp_fucntions.c
 
 #endif
-
