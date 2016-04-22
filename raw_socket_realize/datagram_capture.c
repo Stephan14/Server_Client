@@ -23,7 +23,7 @@ int analyData( char *data )
   struct iphdr *ip;
   struct tcphdr *tcp;
   struct ether_header *ehter;
-  struct context *temp_data;
+  struct context  *temp_data;
   //ether=(struct ether_header*)data;//若数据是从数据链路曾抓取的，那么就有这个以太网帧头
   //printf(" data packet type:%d/n",ether->ether_type);
   //ip=(struct iphdr*)(data+sizeof(struct ether_header));
@@ -50,8 +50,8 @@ int analyData( char *data )
   printf("Source Port ---- %d\n", ntohs( tcp->source ) );
   printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
   //temp_data = ( data + sizeof( *ip ) + sizeof( *tcp ) );
-  // temp_data = ( struct context *)( data + sizeof( *ip ) + sizeof( *tcp ) );
-  // printf("Data ---- %s\n", temp_data->str );
+  temp_data = ( struct context *)( data + sizeof( *ip ) + sizeof( *tcp ) );
+  printf("Data ---- %s\n", temp_data->str );
   return 1;
 }
 int get_datagram( char argv[])
@@ -99,11 +99,12 @@ int get_datagram( char argv[])
 
       while(1)
       {
-        int len = recvfrom( sock_raw_fd, buffer, sizeof(buffer), 0, (struct sockaddr *)&recvaddr, &recv_len );
+        int len = recv( sock_raw_fd, buffer, 1024, 0 );
         if( len > 0 )
         {
-          printf("This packet get %d bytes !!!\n", strlen( buffer ) );
+          printf("This packet get %d bytes !!!\n", len );
           analyData( buffer );
+          buffer[ len ] = '\0';
           printf("Already get %d packet !!!\n", ++count );
           printf("\n");
         }
