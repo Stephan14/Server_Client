@@ -18,7 +18,35 @@ struct context{
   char str[1024];
 };
 
-int analyData( char *data )
+int getnumofbit( int num, int bit )
+{
+  int temp = num;
+  unsigned int result = 0;
+  result = num & ( 1 << ( 31-bit ) );
+  if( result == 0 )
+    return 0;
+  else
+    return 1;
+}
+
+int getDecnum( int num, int bit )
+{
+  int result = 0;
+  int base = 2, increase = 1;
+  int index = 0;
+  /*
+  注意：根据机器大端和小端的模式的不同，整数的位存储方式不同
+  */
+  for( index = bit - 1 ; index >= 0; index-- )
+  {
+    result += increase * getnumofbit( num, 16 + index );
+    increase *= base;
+  }
+
+  return result;
+}
+
+int analyData( char *data, int len )
 {
   struct iphdr *ip;
   struct tcphdr *tcp;
@@ -49,9 +77,13 @@ int analyData( char *data )
   tcp = (struct tcphdr *) ( data + sizeof( *ip ) );//结构体
   printf("Source Port ---- %d\n", ntohs( tcp->source ) );
   printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
-  //temp_data = ( data + sizeof( *ip ) + sizeof( *tcp ) );
-  temp_data = ( struct context *)( data + sizeof( *ip ) + sizeof( *tcp ) );
-  printf("Data ---- %s\n", temp_data->str );
+  int length = getDecnum( ntohs( *( (int *)tcp + 3 ) ), 6 );
+  printf("ewlga%d\n", length );
+  temp_data = ( struct context *)( (int *)tcp + ( length / 4 ) );
+  if( len == ( length + 20  ) )
+    printf("No Data. \n");
+  else
+    printf("Data ---- %s\n", temp_data->str );
   return 1;
 }
 int get_datagram( char argv[])
@@ -103,7 +135,7 @@ int get_datagram( char argv[])
         if( len > 0 )
         {
           printf("This packet get %d bytes !!!\n", len );
-          analyData( buffer );
+          analyData( buffer, len );
           buffer[ len ] = '\0';
           printf("Already get %d packet !!!\n", ++count );
           printf("\n");
