@@ -77,9 +77,8 @@ int analyData( char *data, int len )
   tcp = (struct tcphdr *) ( data + sizeof( *ip ) );//结构体
   printf("Source Port ---- %d\n", ntohs( tcp->source ) );
   printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
-  int length = getDecnum( ntohs( *( (int *)tcp + 3 ) ), 6 );
-  printf("ewlga%d\n", length );
-  temp_data = ( struct context *)( (int *)tcp + ( length / 4 ) );
+  int length = getDecnum( ntohs( *( (int *)tcp + 3 ) ), 4 ) * 4;
+  temp_data = ( struct context *)( (int *)tcp +  length / 4  );
   if( len == ( length + 20  ) )
     printf("No Data. \n");
   else
