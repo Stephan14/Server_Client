@@ -14,6 +14,35 @@
 #include<netinet/tcp.h>
 #include<arpa/inet.h>//inet_ntoa() struct in_addr
 
+
+int getnumofbit( int num, int bit )
+{
+  int temp = num;
+  unsigned int result = 0;
+  result = num & ( 1 << ( 31-bit ) );
+  if( result == 0 )
+    return 0;
+  else
+    return 1;
+}
+
+int getDecnum( int num, int bit )
+{
+  int result = 0;
+  int base = 2, increase = 1;
+  int index = 0;
+  /*
+  注意：根据机器大端和小端的模式的不同，整数的位存储方式不同
+  */
+  for( index = bit - 1 ; index >= 0; index-- )
+  {
+    result += increase * getnumofbit( num, 16 + index );
+    increase *= base;
+  }
+
+  return result;
+}
+
 int analyData( char *data )
 {
   struct iphdr *ip;
@@ -33,6 +62,12 @@ int analyData( char *data )
   printf("Source Port ---- %d\n", ntohs( tcp->source ) );
   printf("Dest Port ---- %d\n", ntohs( tcp->dest ) );
 
+  int length = getDecnum( ntohs( *( (int *)tcp + 3 ) ), 4 ) * 4;
+  char *temp_data = ( struct context *)( (int *)tcp +  length / 4  );
+  if( len == ( length + 20  ) )
+    printf("No Data. \n");
+  else
+    printf("Data ---- %s\n", temp_data );
   return 1;
 }
 int get_frame( char argv[] )
