@@ -78,17 +78,17 @@ int main(int argc, char  *argv[])
           printf("new connection %d create!\n", active_sock_set[ index ] );
           break;
         }
-        if( index == FD_SETSIZE )
-          printf("too many clients !\n");
-        FD_SET( conn_sock_fd , &sock_set );
-        if( index > max_index )
-          max_index = index;
-        if( conn_sock_fd > max_sock )
-          max_sock = conn_sock_fd;
-        printf(" state : %d\n", state );
-        if( --state <= 0 )
-          continue;
 
+      if( index == FD_SETSIZE )
+        printf("too many clients !\n");
+      FD_SET( conn_sock_fd , &sock_set );
+      if( index > max_index )
+        max_index = index;
+      if( conn_sock_fd > max_sock )
+        max_sock = conn_sock_fd;
+      printf(" state : %d\n", state );
+      if( --state <= 0 )
+        continue;
     }
 
     for( index = 0; index < max_index + 1; index++ )
@@ -120,7 +120,7 @@ int main(int argc, char  *argv[])
       }
     }
   }
-
+  
   close( welcome_sock_fd );
   return 0;
 }
