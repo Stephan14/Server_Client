@@ -51,16 +51,17 @@ int main(int argc, char** argv)
         }
         //接受客户端传过来的数据
         n = recv( connect_fd, buff, MAXLINE, 0 );
+        buff[n] = '\0';
 
         //向客户端发送回应数据
         if( !fork() )
         { /*子进程*/
-          if( send( connect_fd, "Hello,you are connected!\n", 26, 0 ) == -1 )
+          if( send( connect_fd, buff, n, 0 ) == -1 )
             perror( "send error" );
             close( connect_fd );
             exit( 0 );
         }
-        buff[n] = '\0';
+
         printf("recv msg from client: %s\n", buff);
         close( connect_fd );
     }
