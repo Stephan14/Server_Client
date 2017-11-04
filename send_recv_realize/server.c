@@ -41,7 +41,7 @@ int main(int argc, char** argv)
       exit(0);
     }
     printf("======waiting for client's request======\n");
-    while( 1 )
+    while ( 1 )
     {
         //阻塞直到有客户端连接，不然多浪费CPU资源。
         if( ( connect_fd = accept( socket_fd, (struct sockaddr*)NULL, NULL) ) == -1 )
@@ -49,6 +49,13 @@ int main(int argc, char** argv)
           printf("accept socket error: %s(errno: %d)",strerror(errno),errno);
           continue;
         }
+
+        //接受错误
+        if (connect_fd == -1) {
+            printf("accept socket error: %s(errno: %d)", strerror(errno), errno);
+            break;
+        }
+
         //接受客户端传过来的数据
         n = recv( connect_fd, buff, MAXLINE, 0 );
         buff[n] = '\0';
