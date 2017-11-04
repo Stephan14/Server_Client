@@ -50,12 +50,6 @@ int main(int argc, char** argv)
           continue;
         }
 
-        //接受错误
-        if (connect_fd == -1) {
-            printf("accept socket error: %s(errno: %d)", strerror(errno), errno);
-            break;
-        }
-
         //接受客户端传过来的数据
         n = recv( connect_fd, buff, MAXLINE, 0 );
         buff[n] = '\0';
